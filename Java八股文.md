@@ -856,7 +856,19 @@
 
 ​				当对象不可达时，GC会判断当前对象是否覆盖finalize方法，没有覆盖就会被回收，覆盖了，否则，判断兑现过是否执				行过finalize 方法没执行过，就放入F-queue队列，由低优先级的线程执行该队列中的finalize方法执行完后，GC再次				判断队列中的对象是否可达，不可达会被回收，否则不会回收。
 
+# MySQL
+
+
+
+# Redis
+
+# MyBatis
+
 # Spring
+
+### Spring启动流程
+
+​	
 
 ### 	如何定义一个IOC容器
 
@@ -877,3 +889,45 @@
 ​			遍历这个Set集合，获取在类上有指定注解的类，并交给IOC容器，定义一个安全的map来存储这些对象
 
 ​			遍历这个IOC容器，获取每一个类的实例，判断是否有依赖注入，如果有，就进行依赖注入
+
+# SpringBoot
+
+### 常用注解以及实现原理
+
+##### 	@SpringBootApplication
+
+​		这个注解是一个组合注解其中包含以下主要注解
+
+##### 		@SpringBootConfiguration
+
+​			该注解也是一个组合注解，包含@Configuration注解，主要作用是，标注该类为配置类，spring启动的时候扫描含有该注			解的类，并生成对应的BeanDefination存入到IOC容器中
+
+##### 		@EnableAutoConfiguration
+
+##### 		@ComponentScan
+
+​	@EnableAutoConfiguration
+
+​	@Configuration
+
+​	@ComponentScan
+
+​	@Service
+
+​	@Repository
+
+​	@Controller
+
+​	@Bean
+
+​	@Import
+
+​	@Condition
+
+### 自动装配
+
+​	自动装配是springboot会把一些配置类的bean注册到IOC容器中，开发者必须要引入相应的包，无需关心其他配置细节，由	      	springboot默认帮我们配置好，要使用的时候直接注入使用即可
+
+### 启动流程
+
+##### 
