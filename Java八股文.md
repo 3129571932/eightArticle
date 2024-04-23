@@ -342,6 +342,34 @@
 
 ​			适用于可以拆解子任务的情况。
 
+##### synchronized
+
+​	原子性：确保线程互斥访问同一段代码
+
+​	可见行：保证共享变量的修改能够及时可见，是通过JMM内存模型来保障的（对一个变量进行unlock之前，必须同步到主内存中，进			行lock之前，需要清空工作内存的变量，重新load一份主内存变量到工作内存）来保证的。
+
+​	有续性：有效解决冲排序问题，即一个lock操作一定先于unlock操作
+
+###### 	基本使用
+
+​		作用于实例方法，锁的是对象的实例
+
+​		作用于静态方法，锁的是Class实例，Class实例只存在于永久代，相当于一个全局锁
+
+​		作用于某个代码块，锁的是括号里的对象实例
+
+###### 	基本原理：
+
+​		依赖于monitorenter和monitorexit两个cpu指令
+
+​		当执行到monitorenter时，会尝试获取monitor的所有权，如果monitor的进入数为0，则该线程进入monitor，然后将进入数		+1，如果该线程已经进入过monitor，只是重新进入，则monitor的进入数+1，如果其他线程已占用monitor，则该线程被阻		塞，知道monitor的进入数为0，再重新尝试获取monitor
+
+​		执行monitorexit的线程必须时拥有monitor的所有权的线程，执行指令的时候，monitor的进入数-1，如果-1后进入数为0，则		线程退出monitor，其他被阻塞的线程则会尝试获取该monitor的所有权
+
+###### 	锁优化（自旋锁）
+
+​		
+
 # JVM
 
 ### 一个类是什么时候被加载的
@@ -898,13 +926,13 @@
 
 ​		这个注解是一个组合注解其中包含以下主要注解
 
-##### 		@SpringBootConfiguration
+​		@SpringBootConfiguration
 
 ​			该注解也是一个组合注解，包含@Configuration注解，主要作用是，标注该类为配置类，spring启动的时候扫描含有该注			解的类，并生成对应的BeanDefination存入到IOC容器中
 
-##### 		@EnableAutoConfiguration
+​		@EnableAutoConfiguration
 
-##### 		@ComponentScan
+​		@ComponentScan
 
 ​	@EnableAutoConfiguration
 
@@ -930,4 +958,3 @@
 
 ### 启动流程
 
-##### 
