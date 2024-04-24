@@ -422,7 +422,31 @@
 
 ##### ReentrantReadWriteLock
 
+​	读写锁，读锁共享，写锁独占，适用于读多写少的场景
+
+###### 	原理
+
+​		底层还是基于AQS实现，还是对state进行操作
+
+​		读操作：基于state的高16位进行操作
+
+​		写操作：基于state的低16位操作
+
+​		写锁重入：也是直接对state的低16位+1即可，只要确认是当前的写锁线程
+
+​		读锁冲入：读锁是共享的，读锁在获取锁资源操作时，是要堆state的高16位进行+1操作。因为读锁是共享锁，所以同一时间会		有多个线程持有读锁资源，为了确认每个线程重入次数，每个读操作的线程都会有一个ThreadLocal记录锁的冲入次数
+
+​		写锁饥饿问题：当前有大量线程占有读锁，一个写锁进来需要等待读锁释放，但是有大量的线程持续获取读锁，导致写锁一直无		法获取，解决方案是获取读锁前判断是否有写锁等待，如果有，则剩余想要获取读锁的线程进入AQS的阻塞队列中即可。
+
 ##### ConcurrentHashMap
+
+​	是一个线程安全的hashMap
+
+###### 	底层原理
+
+​		底层数据结构大体和HashMap类似，其中原本的hash桶（数组）中存储的不再是entry对象，二十segment对象，一个		segment对象继承reentrantLock，可以加锁，当put一个key-value时，会根据key的hashcode%hash桶的长度，得到index，		是sement数组的index，存储到下标为index的segment的下标中，然后使用segment.lock()方法进行加锁，在根据key的		hashcode%segment对象中的hashentry的长度得到具体的index，这个index是segment对象中的hashentry的index，数据放		完后释放锁即可。
+
+​		如果两个线程同时放K-V，两个Key被hash到不同的segment对象中，这样两者可以同时执行，因为是两个segment（两个		锁），这样就能提高并发量，也就是分段锁的实现
 
 ##### ConcurrentLinkedQueue
 
@@ -556,7 +580,7 @@
 
 ​		从App->Ext->BootStrap从下到上，找缓存，如果已经有加载器加载过该类，则不用加载
 
-​		从bootStrap->Ext->App从上到下找的是加载路径，找到就加载，否则就包找不到类
+​		从bootStrap->Ext->App从上到下找的是加载路径，找到就加载，否则就报找不到类的错误
 
 ##### 		好处：
 
