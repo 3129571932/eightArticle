@@ -478,6 +478,52 @@
 
 ##### 原子操作类
 
+- `AtomicInteger`：整型原子类
+- `AtomicLong`：长整型原子类
+- `AtomicBoolean`：布尔型原子类
+- `AtomicIntegerArray`：整型数组原子类
+- `AtomicLongArray`：长整型数组原子类
+- `AtomicReferenceArray`：引用类型数组原子类
+- `AtomicIntegerFieldUpdater`:原子更新整型字段的更新器
+- `AtomicLongFieldUpdater`：原子更新长整型字段的更新器
+- `AtomicReferenceFieldUpdater`：原子更新引用类型里的字段
+
+##### 引用类型
+
+​	强引用：普遍的引用，当一个对象有强引用的时候，垃圾回收就回收不了，即使堆内存不足也不会回收
+
+​	软引用：内存空间充足的时候不会回收，内存不足的时候才回收
+
+​	弱引用：一旦发现是弱引用，不管内存是否充足，直接回收
+
+​	虚引用：形同虚设，和没有引用一样，在任何时候都可能被回收
+
+##### ThreadLocal 
+
+​	ThreadLocal的作用主要是作数据的线程隔离，填充的数据只属于当前线程，在多线程情况下，防止自己的变量被其他线程修改
+
+​	Thread内部有一个ThreadLocalMap类型的map，所有k-v都放入这个map中，所以能做到线程隔离，每次放入key的时候，key就是	当前的ThreadLocal对象，ThreadLocalMap底层是由Entry构成，Entry继承WeakReference
+
+​	`ThreadLocal`的 key 是**弱引用**，那么在 `ThreadLocal.get()`的时候，发生**GC**之后，key 是否为**null**？
+
+​	`ThreadLocal`中`ThreadLocalMap`的**数据结构**？
+
+​	`ThreadLocalMap`的**Hash 算法**？
+
+​	`ThreadLocalMap`中**Hash 冲突**如何解决？
+
+​	`ThreadLocalMap`的**扩容机制**？
+
+​	`ThreadLocalMap`中**过期 key 的清理机制**？**探测式清理**和**启发式清理**流程？
+
+​	`ThreadLocalMap.set()`方法实现原理？
+
+​	`ThreadLocalMap.get()`方法实现原理？
+
+​	项目中`ThreadLocal`使用情况？遇到的坑？
+
+
+
 # JVM
 
 ### 一个类是什么时候被加载的
