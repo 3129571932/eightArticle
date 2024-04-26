@@ -442,6 +442,32 @@
 
 ​	是一个线程安全的hashMap
 
+​	1.7
+
+​		底层是由segment数组+hashentry节点组成的，类似于hashmap的数组+链表，segment对象继承reentrantLock，本身是一把		锁，默认segment数组长度为16，一旦初始化后该数组长度不可改变，只能是hashentry扩容
+
+###### 		put
+
+​			在将数据插入指定的HashEntry位置时（链表的尾端），会通过继承ReentrantLock的tryLock（）方法尝试去获取锁，如果			获取成功就直接插入相应的位置，如果已经有线程获取该Segment的锁，那当前线程会以自旋的方式去继续的调用tryLock			（）方法去获取锁，超过指定次数就挂起，等待唤醒
+
+​	1.8
+
+​		摒弃了segement的思想，采用Node+链表/红黑树的底层数据结构，并采用CAS+synchronized来保证并发安全
+
+###### 		put
+
+​			如果没有初始化就先调用initTable（）方法来进行初始化过程
+
+​			如果没有hash冲突就直接CAS插入
+
+​			如果还在进行扩容操作就先进行扩容
+
+​			如果存在hash冲突，就加锁来保证线程安全，这里有两种情况，一种是链表形式就直接遍历到尾端插入，一种是红黑树就			按照红黑树结构插入，
+
+​			最后一个如果Hash冲突时会形成Node链表，在链表长度超过8，Node数组超过64时会将链表结构转换为红黑树的结构，			break再一次进入循环
+
+​			如果添加成功就调用addCount（）方法统计size，并且检查是否需要扩容
+
 ###### 	底层原理
 
 ​		底层数据结构大体和HashMap类似，其中原本的hash桶（数组）中存储的不再是entry对象，二十segment对象，一个		segment对象继承reentrantLock，可以加锁，当put一个key-value时，会根据key的hashcode%hash桶的长度，得到index，		是sement数组的index，存储到下标为index的segment的下标中，然后使用segment.lock()方法进行加锁，在根据key的		hashcode%segment对象中的hashentry的长度得到具体的index，这个index是segment对象中的hashentry的index，数据放		完后释放锁即可。
