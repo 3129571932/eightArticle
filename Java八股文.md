@@ -502,13 +502,19 @@
 
 ​	ThreadLocal的作用主要是作数据的线程隔离，填充的数据只属于当前线程，在多线程情况下，防止自己的变量被其他线程修改
 
-​	Thread内部有一个ThreadLocalMap类型的map，所有k-v都放入这个map中，所以能做到线程隔离，每次放入key的时候，key就是	当前的ThreadLocal对象，ThreadLocalMap底层是由Entry构成，Entry继承WeakReference
+​	Thread内部有一个ThreadLocalMap类型的map，所有k-v都放入这个map中，所以能做到线程隔离，每次放入key的时候，key就是	当前的ThreadLocal对象，ThreadLocalMap底层是由Entry构成，Entry继承WeakReference，在初始化的时候，调用super	     	 （key），把key交给weakReference，所以ThreadLocal这个key就是一个弱引用
 
 ​	`ThreadLocal`的 key 是**弱引用**，那么在 `ThreadLocal.get()`的时候，发生**GC**之后，key 是否为**null**？
 
+​		ThreadLocalMap中的key是一个弱引用，只能表明这个key容易被回收，只要ThreadLocalMap中还存在对该key的强引用，那		么这个key就不会被回收。
+
 ​	`ThreadLocal`中`ThreadLocalMap`的**数据结构**？
 
+​		ThreadLocalMap是ThreadLocal的内部类，由多个Entry组成一个数组，Entry中有弱引用的ThreadLocal作为key，Object作为		Value，当发生Hash冲突的时候，他会尝试往后移动一个位置，如果再次发生hash冲突，再次往后，到数组末尾的时候，会移		动到数组头接着来
+
 ​	`ThreadLocalMap`的**Hash 算法**？
+
+​		
 
 ​	`ThreadLocalMap`中**Hash 冲突**如何解决？
 
@@ -516,13 +522,123 @@
 
 ​	`ThreadLocalMap`中**过期 key 的清理机制**？**探测式清理**和**启发式清理**流程？
 
+​		探测式清理
+
+​			在get set remove的时候开始，从当前位置往后遍历，如果碰到key=null， 或者ley！=null且ThreadLocal对象被回收的情			况，就会对相应的key或者value设置为null
+
+​		启发式清理
+
+​			是在调用`ThreadLocalMap`的`set`、`get`或`remove`方法时，如果发现已经存在过期的key，会立即进行一轮清理操作，以			进一步减少内存中的过期数据。
+
 ​	`ThreadLocalMap.set()`方法实现原理？
 
 ​	`ThreadLocalMap.get()`方法实现原理？
 
 ​	项目中`ThreadLocal`使用情况？遇到的坑？
 
+##### CopyOnWriteArrayList
 
+​	是一个线程安全且读操作无锁的安全容器，写操作则通过创建底层数组的副本来实现，是一种读写分离的并发策略。
+
+###### 	原理：
+
+​		读操作无锁，写操作的时候，则首先将当前容器复制一份，然后在新副本上执行写操作，结束之后再将原容器的引用指向新容		器。
+
+##### Semaphore
+
+​	信号量，控制同时访问资源的线程个数，比如，座椅有5个，10个人想要坐，那么同时坐的人只有5个，剩下5个只能等待，当坐着的	5人中有人离开，则等待5人中可以有一人坐，其他人继续等待
+
+​	acquire()每次会有一个线程获得许可继而执行，release（）每次会回收一个许可。
+
+```java
+public class Main {
+static Semaphore semaphore = new Semaphore(1,false);
+public static void main(String[] args) throws InterruptedException {
+
+    new Thread(() -> {
+        try {
+            semaphore.acquire();
+            System.out.println("Thread 1 run");
+            while (true) {
+                Scanner sc = new Scanner(System.in);
+                int num = sc.nextInt();
+                if (num == 1) {
+                    semaphore.release();
+                    break;
+                }
+            }
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+
+    new Thread(() -> {
+        try {
+            semaphore.acquire();
+            System.out.println("Thread 2 run");
+            semaphore.release();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+}
+```
+##### CyclicBarrier
+
+​	
+
+##### CountDownLatch
+
+```java
+public class Main {
+static CountDownLatch countDownLatch = new CountDownLatch(3);
+public static void main(String[] args) throws InterruptedException {
+
+    //开始阻塞
+    new Thread(() -> {
+        try {
+            countDownLatch.await();
+            System.out.println("thread 1");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+
+    new Thread(() -> {
+        try {
+            countDownLatch.countDown();
+            System.out.println("thread 2");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+
+    new Thread(() -> {
+        try {
+            countDownLatch.countDown();
+            System.out.println("thread 3");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+
+    new Thread(() -> {
+        try {
+            countDownLatch.countDown();
+            System.out.println("thread 4");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+
+    System.out.println("over");
+}
+}
+```
+##### CAS问题以及如何解决
+
+​	ABA问题，线程1读取变量a值为0，线程2读取变量a值为0，线程2把变量a改成1，然后又改成0，这时候线程1读取变量a值为0，变	改了，但是实际上变量a有一次值改变的情况线程1不知道。可以使用原子类带版本号的那一个，根据版本号来判断值是否变化过
 
 # JVM
 
