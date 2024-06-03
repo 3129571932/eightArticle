@@ -230,6 +230,10 @@
 
 ​	MVCC主要解决了并发读写问题，降低死锁概率（使用乐观锁），解决快照读的问题
 
+​	数据库表中有三个隐藏字短，包括 db_trx_id（对当前数据最后一次修改的事务id），db_roll_ptr（指向历史版本数据undolog），	idx(隐藏的主键id)，undolog，数据库会记录下update insert delete操作日志，以便回滚，readview（视图）
+
+​	
+
 ### 锁
 
 ### 主从
