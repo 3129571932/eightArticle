@@ -239,3 +239,46 @@
 ​					数组需要预先给出空间，而链表是动态扩容的
 
 ### HashMap和HashTable区别
+
+##### 1.数据结构
+
+​			两者都是实现Map接口，HashMap和HashTable都是由散列表构成，数组（bucket）+ 链表构成
+
+##### 2.线程安全
+
+​			HashTable是线程安全的，synchronized修饰方法，但是HashMap效率高于HashTable
+
+##### 3.其他
+
+​			HashMap允许key或者value为null，HashTable不允许
+
+
+
+### 创建线程的几种方式
+
+​	
+
+
+
+### 线程的生命周期
+
+​	
+
+
+
+### 线程的创建方式
+
+
+
+
+
+### 线程池的核心参数
+
+
+
+
+
+### 线程池的运行原理
+
+## 
+
