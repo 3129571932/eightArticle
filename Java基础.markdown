@@ -286,11 +286,11 @@
 
 ##### 	1.corePoolSize
 
-​		核心线程数，表示线程池中长期存活的线程数
+​		核心线程数，创建以后，会一直存活到线程池销毁，空闲时也不销毁。
 
 ##### 	2.maximumPooSize
 
-​		最大线程数，线程池允许创建的最大线程数量，当线程池的任务队列满了后，可以创建的最大线程数
+​		最大线程数，线程池允许创建的最大线程数量，阻塞队列满了
 
 ##### 	3.keepAliveTime
 
@@ -302,13 +302,39 @@
 
 ##### 	5.BlockingQueue
 
+​		线程池的任务队列
+
+​			ArrayBlockingQueue：由数组构成的有界阻塞队列
+
+​			LinkedBlockingQueue：由链表构成的有界阻塞队列
+
+​			SynchronousQUeue：一个不存储元素的阻塞队列，直接提交给线程不保持它们
+
+​			PriorityBlockingQueue：一个支持优先级排序的无界队列
+
+​			DelayQueue：一个使用优先级队列实现的无界阻塞队列，只有在延迟期满时才能从中提取元素
+
+​			LinkedTransferQueue：一个由链表结构组成的无界阻塞队列。与SynchronousQueue类似，还含			有非阻塞方法。
+
+​			LinkedBlockingQueue：一个由链表构成的双向阻塞队列
+
 ##### 	6.ThreadFactory
+
+​		创建线程的工厂
 
 ##### 	7.RejectedExecuitionHandler
 
+​		拒绝策略
 
+​			AbortPolicy：拒绝并抛出异常。
+
+​			CallerRunsPolicy：使用当前调用的线程来执行此任务。
+
+​			DiscardOldestPolicy：抛弃队列头部（最旧）的一个任务，并执行当前任务。
+
+​			DiscardPolicy：忽略并抛弃当前任务。
 
 ### 线程池的运行原理
 
-## 
+​		
 
